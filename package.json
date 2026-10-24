@@ -1,0 +1,38 @@
+{
+  "name": "oled-service",
+  "version": "1.3.0",
+  "description": "OLED SERVICE",
+  "main": "main.js",
+  "author": "DZHURABE",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win"
+  },
+  "build": {
+    "appId": "com.dzhurabe.oledservice",
+    "productName": "OLED Service",
+    "files": [
+      "main.js",
+      "preload.js",
+      "oled_service.html"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  },
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3"
+  },
+  "dependencies": {
+    "7zip-bin": "^5.2.0"
+  }
+}

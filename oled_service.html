@@ -890,6 +890,172 @@
   .zoom-hud i{display:block;width:110px;height:5px;border-radius:9px;background:#ffffff26;overflow:hidden;}
   .zoom-hud i b{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .2s;}
 </style>
+<style>
+/* ============ АВТО-ЗАКАЗ / ПРИХОД ============ */
+.nav-btn:has(.nav-badge)::after{display:none !important;}
+.nav-badge{margin-left:auto;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#e11d48;color:#fff;font:700 11px var(--font);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sw{position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0;cursor:pointer;vertical-align:middle;}
+.sw input{opacity:0;width:0;height:0;position:absolute;}
+.sw i{position:absolute;inset:0;border-radius:20px;background:var(--surface-3);border:1px solid var(--line-2);transition:background .2s,border-color .2s;}
+.sw i::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 2px 5px #0000004d;transition:transform .2s;}
+.sw input:checked + i{background:#16a36a;border-color:#16a36a;}
+.sw input:checked + i::after{transform:translateX(20px);}
+body.light .sw i{background:#d3d9ea;border-color:#c9d0e3;}
+body.light .sw input:checked + i{background:#15803d;border-color:#15803d;}
+
+.ao-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:20px;}
+.ao-head h2.page-title{margin:0 0 6px;}
+body.light .ao-head h2.page-title{background:linear-gradient(90deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.ao-sub{margin:0;color:var(--muted);font-size:13px;max-width:420px;line-height:1.5;}
+.ao-head-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.ao-pill-toggle{display:flex;align-items:center;gap:12px;padding:8px 12px 8px 16px;border:1px solid var(--line-2);border-radius:12px;background:var(--surface);font-weight:600;font-size:13px;cursor:pointer;}
+.ao-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;align-items:start;}
+.ao-grid > .panel, .ao-side > .panel{margin-bottom:18px;}
+@media(max-width:1150px){ .ao-grid,.po-new-grid{grid-template-columns:1fr !important;} .po-grid{grid-template-columns:1fr !important;} }
+.ao-tools{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px;}
+.ao-tools .lbl{font-size:12.5px;color:var(--muted);}
+.ao-inline-sw{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;cursor:pointer;}
+.ao-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.ao-chip{padding:8px 15px;border-radius:20px;border:1px solid var(--line-2);background:var(--surface);font:600 12.5px var(--font);cursor:pointer;color:var(--text-2);transition:background .15s;}
+.ao-chip:hover{background:var(--surface-2);}
+.ao-chip.urgent{color:var(--red);border-color:#ff5d6c66;}
+.ao-chip.soon{color:#d97706;border-color:#f59e0b66;}
+.ao-chip.ok{color:#16a36a;border-color:#2fd08a66;}
+.ao-chip.active{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-color:transparent;box-shadow:0 8px 18px -10px var(--accent);}
+.ao-table td{vertical-align:middle;}
+.ao-table td small{display:block;color:var(--muted);font-size:11.5px;margin-top:2px;}
+.ao-table td small.ao-transit{color:var(--accent);}
+.ao-table tr.ao-urgent td{background:#ff5d6c0f;}
+.ao-table tr.ao-off td:not(:first-child){opacity:.45;}
+input[type=checkbox].ao-check{width:17px;height:17px;accent-color:var(--accent);cursor:pointer;vertical-align:middle;margin:0;}
+.ao-st{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap;}
+.ao-st.urgent{background:var(--red-soft);color:var(--red);}
+.ao-st.soon{background:var(--yellow-soft);color:#b45309;}
+.ao-st.ok{background:var(--green-soft);color:#16a36a;}
+.qty-step{display:inline-flex;align-items:center;gap:6px;}
+.qty-step button{width:30px;height:30px;border-radius:9px;border:1px solid var(--line-2);background:var(--surface);color:var(--accent);font:700 16px var(--font);cursor:pointer;line-height:1;padding:0;}
+.qty-step button:hover{background:var(--accent-soft);}
+.qty-step input{width:48px;text-align:center;border:1px solid transparent;border-radius:8px;background:transparent;color:var(--text);font:700 15px var(--font);padding:4px 0;-moz-appearance:textfield;}
+.qty-step input:focus{outline:none;border-color:var(--accent);}
+.qty-step input::-webkit-outer-spin-button,.qty-step input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.qty-step.warn input{color:#b45309;}
+.ao-foot{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:12px;gap:10px;flex-wrap:wrap;}
+.ao-sum-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;background:var(--surface-2);margin-bottom:10px;font-size:13px;color:var(--text-2);}
+.ao-sum-row b{color:var(--text);font-size:14.5px;font-variant-numeric:tabular-nums;white-space:nowrap;}
+.ao-sum-row.profit{background:linear-gradient(135deg,#12a66f,#0b8a5f);color:#fff;padding:14px;}
+.ao-sum-row.profit span{font-weight:700;color:#fff;line-height:1.25;}
+.ao-sum-row.profit small{display:block;font-weight:500;font-size:11px;color:#ffffffcc;}
+.ao-sum-row.profit b{color:#fff;font-size:20px;font-family:var(--font-display);}
+.ao-sum-row.cost{background:linear-gradient(135deg,#d97706,#b45309);color:#fff;font-weight:700;}
+.ao-sum-row.cost b{color:#fff;font-size:20px;font-family:var(--font-display);}
+.info-box{display:flex;gap:10px;padding:12px 14px;border-radius:12px;background:var(--accent-soft);color:var(--text-2);font-size:12.5px;line-height:1.55;margin:10px 0;}
+.info-box svg{width:16px;height:16px;flex-shrink:0;color:var(--accent);margin-top:2px;}
+.ao-how{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:14px;}
+.ao-how li{display:flex;gap:12px;font-size:13px;line-height:1.5;color:var(--text-2);}
+.ao-how li > span{width:26px;height:26px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;}
+.ao-how li:last-child > span{background:var(--green-soft);color:#16a36a;}
+.btn.block{width:100%;justify-content:center;margin-top:10px;}
+.btn.wa-btn svg{width:16px;height:16px;}
+.link-btn{background:none;border:0;color:var(--accent);font:600 13px var(--font);cursor:pointer;padding:8px 4px;text-decoration:none;display:inline-block;}
+.link-btn.block{display:block;width:100%;text-align:center;margin-top:6px;}
+.link-btn:hover{text-decoration:underline;}
+.ao-check-row{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-2);cursor:pointer;margin:2px 0 6px;}
+.ao-limit{font-size:12.5px;color:var(--red);background:var(--red-soft);border-radius:10px;padding:9px 12px;margin-top:8px;display:none;}
+.po-switch-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;background:var(--surface-2);margin-top:6px;cursor:pointer;}
+.po-switch-row b{display:block;font-size:13.5px;}
+.po-switch-row small{display:block;color:var(--muted);font-size:12px;margin-top:2px;line-height:1.4;}
+.ao-empty{text-align:center;color:var(--muted);padding:36px 14px;font-size:13px;line-height:1.6;}
+.ao-empty b{display:block;color:var(--text);font-size:15px;margin-bottom:4px;}
+
+/* modal parts */
+.mh{display:flex;align-items:center;gap:14px;margin-bottom:6px;}
+.mh-ico{width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.mh-ico svg{width:22px;height:22px;}
+.mh-ico.soft{background:var(--accent-soft);color:var(--accent);}
+.mh-ico.ok{background:var(--green-soft);color:#16a36a;border-radius:50%;}
+.mh h3{margin:0 !important;}
+.mh small{display:block;color:var(--muted);font-size:13px;margin-top:3px;}
+.mh-x{margin-left:auto;width:38px;height:38px;border-radius:11px;border:1px solid var(--line-2);background:var(--surface);color:var(--text-2);font-size:18px;cursor:pointer;flex-shrink:0;}
+.set-sec{font:700 11px var(--font);letter-spacing:1.2px;color:var(--accent);text-transform:uppercase;margin:22px 0 2px;}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 0;border-bottom:1px solid var(--line);}
+.set-row:last-child{border-bottom:none;}
+.set-row b{display:block;font-size:14px;font-weight:600;}
+.set-row small{display:block;color:var(--muted);font-size:12px;margin-top:2px;}
+.set-row .r{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.set-in{padding:9px 12px;border-radius:10px;border:1px solid var(--line-2);background:var(--surface-2);color:var(--text);font:600 14px var(--font);}
+.set-in:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft);}
+input.set-in[type=number]{width:70px;text-align:center;}
+textarea.set-in{width:100%;min-height:120px;resize:vertical;font:500 13.5px/1.55 var(--font);}
+.set-tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;margin-right:8px;}
+.kv-row{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-size:14px;color:var(--text-2);}
+.kv-row b{color:var(--text);text-align:right;}
+.kv-row b.g{color:#16a36a;}
+.od-block{padding:4px 0 6px;}
+.od-block + .od-block{border-top:1px solid var(--line);margin-top:10px;padding-top:14px;}
+.od-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;color:var(--text-2);font-size:13px;margin:4px 0 14px;}
+.od-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.od-btns .full{grid-column:1/-1;}
+.btn.wa{background:linear-gradient(135deg,#16a36a,#0f7a4f);box-shadow:0 10px 22px -12px #16a36acc;color:#fff;}
+
+/* purchase */
+.po-grid{display:grid;grid-template-columns:360px minmax(0,1fr);gap:18px;align-items:start;}
+.po-card{padding:16px 18px;border-radius:16px;border:1px solid var(--line-2);background:var(--surface);cursor:pointer;margin-bottom:12px;transition:transform .15s,box-shadow .15s;box-shadow:var(--shadow);}
+.po-card:hover{transform:translateY(-1px);}
+.po-card.active{border:2px solid var(--accent);box-shadow:0 0 0 4px var(--accent-soft);padding:15px 17px;}
+.po-card.dim{opacity:.72;}
+.po-card-top{display:flex;justify-content:space-between;align-items:center;gap:10px;}
+.po-card-top b{font:700 16px var(--font-display);}
+.po-meta{font-size:12px;color:var(--muted);margin:5px 0 10px;}
+.po-bottom{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--text-2);}
+.po-bottom b{color:var(--text);white-space:nowrap;}
+.po-prog{height:5px;border-radius:5px;background:var(--surface-3);margin-top:10px;overflow:hidden;}
+.po-prog i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:5px;}
+.po-st{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap;}
+.po-st.pending{background:var(--yellow-soft);color:#b45309;}
+.po-st.partial{background:var(--accent-soft);color:var(--accent);}
+.po-st.received{background:var(--green-soft);color:#16a36a;}
+.po-st.cancelled,.po-st.closed{background:var(--surface-3);color:var(--muted);}
+.po-detail-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px;}
+.po-detail-head h3{margin:0 0 4px;font:700 20px var(--font-display);}
+.po-detail-head small{color:var(--muted);font-size:13px;}
+.po-mini-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+tr.po-warn td{background:var(--yellow-soft);}
+td small.warn{display:block;color:#b45309;font-size:11.5px;font-weight:600;margin-top:2px;}
+td small.more{display:block;color:var(--accent);font-size:11.5px;font-weight:600;margin-top:2px;}
+.po-more{display:block;color:var(--muted);font-size:12.5px;padding:10px 4px;background:none;border:0;cursor:pointer;}
+.po-more:hover{color:var(--accent);}
+.po-total-row{display:flex;justify-content:space-between;padding:14px 16px;border-radius:12px;background:var(--surface-2);margin:8px 0 4px;font-size:14px;color:var(--text-2);}
+.po-total-row b{color:var(--text);font-size:15px;}
+.po-actions{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:10px;margin-top:12px;}
+.po-actions .btn{justify-content:center;}
+.btn.outline-danger{background:var(--surface);border:1px solid #ff5d6c55;color:var(--red);box-shadow:none;}
+.btn.outline-danger:hover{background:var(--red-soft);}
+.btn.soft{background:var(--accent-soft);color:var(--accent);box-shadow:none;border:1px solid transparent;}
+.po-note{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5;}
+.po-new-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;align-items:start;}
+.po-new-grid .panel{margin-bottom:18px;}
+.po-fields{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+@media(max-width:700px){ .po-fields{grid-template-columns:1fr;} .po-actions{grid-template-columns:1fr;} }
+.po-search{position:relative;margin-bottom:10px;}
+.po-search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--muted);}
+.po-search input{width:100%;padding:13px 14px 13px 42px;border-radius:12px;border:2px solid var(--accent);background:var(--surface);color:var(--text);font:500 14px var(--font);}
+.po-search input:focus{outline:none;box-shadow:0 0 0 4px var(--accent-soft);}
+.po-res{position:absolute;left:0;right:0;top:calc(100% + 4px);background:var(--surface);border:1px solid var(--line-2);border-radius:12px;box-shadow:0 20px 40px -20px #0009;z-index:20;max-height:320px;overflow:auto;display:none;}
+.po-res.show{display:block;}
+.po-res button{display:flex;justify-content:space-between;gap:10px;width:100%;padding:11px 14px;border:0;background:none;color:var(--text);font:500 13.5px var(--font);cursor:pointer;text-align:left;}
+.po-res button:hover,.po-res button.hl{background:var(--surface-2);}
+.po-res button small{color:var(--muted);white-space:nowrap;}
+.po-res .none{padding:12px 14px;color:var(--muted);font-size:13px;}
+.po-cost{width:100px;padding:9px 12px;border-radius:10px;border:1px solid var(--line-2);background:var(--surface);color:var(--text);text-align:right;font:600 14px var(--font);}
+.po-cost:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft);}
+.x-btn{border:0;background:none;color:var(--red);font-size:18px;cursor:pointer;padding:4px 8px;border-radius:8px;}
+.x-btn:hover{background:var(--red-soft);}
+.pr-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);}
+.pr-row b{display:block;font-size:14px;}
+.pr-row small{display:block;color:var(--muted);font-size:12px;margin-top:2px;}
+.pr-row .up{color:var(--red);font-weight:700;}
+.pr-row .down{color:#16a36a;font-weight:700;}
+</style>
 </head>
 <body class="light" data-color="violet">
 
@@ -1064,16 +1230,107 @@
 
     <!-- PURCHASE (ПРИХОД) -->
     <section class="page" id="page-purchase">
-      <h2 class="page-title">Приход товара</h2>
-      <div class="panel" style="max-width:520px;">
-        <div class="field"><label>Товар</label><select id="purchaseProduct" onchange="onPurchaseProductChange()"></select></div>
-        <div class="field"><label>Количество</label><input type="number" id="purchaseQty" min="1" value="1"></div>
-        <div class="field"><label>Закупочная цена за 1 шт. (сомони)</label><input type="number" id="purchasePrice" min="0" value="0"></div>
-        <button class="btn green" onclick="doPurchase()">Оформить приход</button>
+      <div id="poListView">
+        <div class="ao-head">
+          <div><h2 class="page-title">Приход</h2><p class="ao-sub">Здесь вы принимаете товар от поставщиков: по заказам из «Авто-заказа» или без заказа.</p></div>
+          <div class="ao-head-actions"><button class="btn" onclick="poOpenNew()"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Приход без заказа</button></div>
+        </div>
+        <div class="ao-chips" id="poTabs"></div>
+        <div id="poOrdersTab" class="po-grid">
+          <div id="poOrderList"></div>
+          <div class="panel" id="poDetail"></div>
+        </div>
+        <div id="poHistTab" class="panel">
+          <h3>История приходов</h3>
+          <div class="table-wrap"><table><thead><tr><th>Дата</th><th>Товар</th><th>Поставщик</th><th>Документ</th><th>Кол-во</th><th>Сумма</th></tr></thead><tbody id="purchaseHistBody"></tbody></table></div>
+        </div>
       </div>
-      <div class="panel">
-        <h3>История прихода</h3>
-        <table><thead><tr><th>Дата</th><th>Товар</th><th>Кол-во</th><th>Сумма</th></tr></thead><tbody id="purchaseHistBody"></tbody></table>
+
+      <div id="poNewView" style="display:none">
+        <button class="link-btn" onclick="poBack()">← Назад к приходам</button>
+        <div class="ao-head" style="margin-top:2px">
+          <div><h2 class="page-title">Приход без заказа</h2><p class="ao-sub">Для товара, который привезли без заказа из программы.</p></div>
+        </div>
+        <div class="po-new-grid">
+          <div>
+            <div class="panel">
+              <h3>Откуда товар</h3>
+              <div class="po-fields">
+                <div class="field"><label>Поставщик</label><select id="poSup" onchange="poDraftSet('supplierId',this.value)"></select></div>
+                <div class="field"><label>Дата</label><input type="date" id="poDate" onchange="poDraftSet('date',this.value)"></div>
+                <div class="field"><label>№ накладной (если есть)</label><input type="text" id="poInv" placeholder="Не обязательно" oninput="poDraftSet('invoice',this.value,true)"></div>
+              </div>
+              <label class="po-switch-row"><div><b>Консигнация</b><small>Платите поставщику после продажи. Включится долг поставщику.</small></div><span class="sw"><input type="checkbox" id="poConsign" onchange="poDraftSet('consign',this.checked)"><i></i></span></label>
+            </div>
+            <div class="panel">
+              <div class="panel-head"><h3>Что привезли</h3><button class="btn secondary small" onclick="poNewProduct()">+ Новый товар (нет в списке)</button></div>
+              <div class="po-search">
+                <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-4.3-4.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                <input type="text" id="poSearch" placeholder="Добавить товар: введите модель или название..." autocomplete="off" oninput="poSearchRender()" onfocus="poSearchRender()" onkeydown="poSearchKey(event)">
+                <div class="po-res" id="poRes"></div>
+              </div>
+              <div class="table-wrap"><table><thead><tr><th>Товар</th><th>Количество</th><th id="poCostHead">Закупка</th><th>Сумма</th><th></th></tr></thead><tbody id="poItems"></tbody></table></div>
+              <div class="ao-foot"><span>Совет: если цена закупки изменилась, программа предложит пересмотреть розничную цену.</span></div>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>Итог прихода</h3>
+            <div class="ao-sum-row"><span>Позиций</span><b id="poTPos">0</b></div>
+            <div class="ao-sum-row"><span>Штук</span><b id="poTUnits">0</b></div>
+            <div class="ao-sum-row cost"><span>Закупка</span><b id="poTCost">0</b></div>
+            <div class="info-box"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v5M12 8v.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span id="poInfo"></span></div>
+            <button class="btn green block" onclick="poPost()"><svg viewBox="0 0 24 24" fill="none"><path d="m5 12.5 4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Провести приход</button>
+            <button class="btn secondary block" onclick="poSaveDraft()">Сохранить черновик</button>
+            <button class="link-btn block" style="color:var(--red)" onclick="poCancelNew()">Отменить</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AUTO-ORDER (АВТО-ЗАКАЗ) -->
+    <section class="page" id="page-autoorder">
+      <div class="ao-head">
+        <div><h2 class="page-title">Авто-заказ</h2><p class="ao-sub">Программа сама считает, что и сколько докупить, по вашим продажам</p></div>
+        <div class="ao-head-actions">
+          <label class="ao-pill-toggle">Пересчитывать каждое утро <span class="sw"><input type="checkbox" id="aoMorning" onchange="aoSetCfg('morning',this.checked)"><i></i></span></label>
+          <button class="btn secondary" onclick="openAoSettings()"><svg viewBox="0 0 24 24" fill="none"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="16" cy="7" r="2" stroke="currentColor" stroke-width="1.9"/><circle cx="10" cy="17" r="2" stroke="currentColor" stroke-width="1.9"/></svg> Настройки</button>
+          <button class="btn" onclick="aoRecalc()"><svg viewBox="0 0 24 24" fill="none"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg> Пересчитать</button>
+        </div>
+      </div>
+      <div class="cards-row">
+        <div class="card c-red"><div class="card-top"><div class="label">Нужно докупить</div></div><div class="value" id="aoCNeed">0</div><div class="sub">позиций с низким остатком</div></div>
+        <div class="card c-blue"><div class="card-top"><div class="label">Единиц в заказе</div></div><div class="value" id="aoCUnits">0</div><div class="sub">штук к закупке</div></div>
+        <div class="card c-yellow"><div class="card-top"><div class="label">Сумма закупки</div></div><div class="value" id="aoCCost">0</div><div class="sub">по ценам закупки</div></div>
+        <div class="card c-green"><div class="card-top"><div class="label">Ожидаемая прибыль</div></div><div class="value" id="aoCProfit">0</div><div class="sub">после продажи заказа</div></div>
+      </div>
+      <div class="ao-grid">
+        <div class="panel">
+          <div class="panel-head"><h3>Рекомендуем докупить</h3><span class="panel-note" id="aoCalcNote"></span></div>
+          <div class="ao-tools">
+            <span class="lbl">Запас на</span><div class="abc-seg" id="aoDaysSeg"></div>
+            <label class="ao-inline-sw"><span class="sw"><input type="checkbox" id="aoOnlyAB" onchange="aoSet('onlyAB',this.checked)"><i></i></span>Только ходовые (A, B)</label>
+          </div>
+          <div class="ao-chips" id="aoChips"></div>
+          <div class="table-wrap"><table class="ao-table"><thead><tr><th style="width:36px"><input type="checkbox" class="ao-check" id="aoAll" onchange="aoToggleAll(this.checked)"></th><th>Товар</th><th>Остаток</th><th>Продажи</th><th>Хватит на</th><th style="text-align:center">Заказать</th></tr></thead><tbody id="aoBody"></tbody></table></div>
+          <div class="ao-foot"><span id="aoFootSel"></span><span>Количество можно менять вручную: − и +</span></div>
+        </div>
+        <div class="ao-side">
+          <div class="panel">
+            <h3>Расчёт заказа</h3>
+            <div class="ao-sum-row"><span>Позиций</span><b id="aoSPos">0</b></div>
+            <div class="ao-sum-row"><span>Закупка</span><b id="aoSCost">0</b></div>
+            <div class="ao-sum-row"><span>Выручка с продажи</span><b id="aoSRev">0</b></div>
+            <div class="ao-sum-row profit"><span>Чистая прибыль<small id="aoSMargin">маржа 0%</small></span><b id="aoSProfit">0</b></div>
+            <div class="field" style="margin:14px 0 8px"><label>Поставщик</label><select id="aoSupplier" onchange="aoSet('supplierId',this.value)"></select></div>
+            <label class="ao-check-row"><input type="checkbox" class="ao-check" id="aoSplit" onchange="aoSet('split',this.checked)"> Разделить заказ по поставщикам</label>
+            <label class="po-switch-row"><div><b>Консигнация</b><small>Платите поставщику после продажи, свои деньги в закупку не вкладываются.</small></div><span class="sw"><input type="checkbox" id="aoConsign" onchange="aoSet('consign',this.checked)"><i></i></span></label>
+            <div class="ao-limit" id="aoLimit"></div>
+            <button class="btn block" style="padding:13px" onclick="aoOpenConfirm()"><svg viewBox="0 0 24 24" fill="none"><path d="m5 12.5 4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Оформить заказ</button>
+            <button class="btn secondary block wa-btn" onclick="aoWhatsApp()"><svg viewBox="0 0 24 24" fill="none"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19l-4 1Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg> Отправить списком в WhatsApp</button>
+            <button class="link-btn block" onclick="aoPdf()">Скачать PDF</button>
+          </div>
+          <div class="panel"><h3>Как считается</h3><ol class="ao-how" id="aoHow"></ol></div>
+        </div>
       </div>
     </section>
 
@@ -1504,6 +1761,36 @@
   </div>
 </div></div>
 
+<!-- АВТО-ЗАКАЗ: настройки -->
+<div class="modal-bg" id="aoSettingsModalBg"><div class="modal" style="width:620px">
+  <div class="mh"><div class="mh-ico"><svg viewBox="0 0 24 24" fill="none"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="16" cy="7" r="2" stroke="currentColor" stroke-width="1.9"/><circle cx="10" cy="17" r="2" stroke="currentColor" stroke-width="1.9"/></svg></div><div><h3>Настройки авто-заказа</h3><small>Как программа считает, что докупить</small></div><button class="mh-x" onclick="closeModal('aoSettingsModalBg')">×</button></div>
+  <div id="aoSetBody"></div>
+  <div class="modal-actions"><button class="btn" onclick="closeModal('aoSettingsModalBg')">Готово</button></div>
+</div></div>
+
+<!-- АВТО-ЗАКАЗ: шаг 1 подтверждение -->
+<div class="modal-bg" id="orderConfirmModalBg"><div class="modal" style="width:520px">
+  <div class="mh-ico soft" style="margin-bottom:14px"><svg viewBox="0 0 24 24" fill="none"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 8h6M9 12h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+  <h3 style="margin:0 0 6px">Оформить заказ?</h3>
+  <p style="margin:0 0 10px;color:var(--text-2);font-size:13.5px;line-height:1.5">Проверьте итог. Заказ сохранится, но поставщику ничего не уйдёт, пока вы сами не отправите.</p>
+  <div id="ocBody"></div>
+  <div class="info-box"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v5M12 8v.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Остатки на складе не изменятся, пока вы не примете товар в разделе «Приход».</span></div>
+  <div class="od-btns" style="margin-top:16px"><button class="btn secondary" onclick="closeModal('orderConfirmModalBg')">Назад</button><button class="btn" onclick="aoPlaceOrder()">Оформить заказ</button></div>
+</div></div>
+
+<!-- АВТО-ЗАКАЗ: шаг 2 заказ сохранён -->
+<div class="modal-bg" id="orderDoneModalBg"><div class="modal" style="width:560px">
+  <div id="odBody"></div>
+  <div class="info-box"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v5M12 8v.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Когда товар приедет, откройте заказ в разделе «Приход» и нажмите «Принять».</span></div>
+  <div class="od-btns" style="margin-top:14px"><button class="btn secondary" onclick="closeModal('orderDoneModalBg')">Закрыть</button><button class="btn soft" id="odGoBtn">Перейти к заказу →</button></div>
+</div></div>
+
+<!-- ПРИХОД: пересмотр розничной цены -->
+<div class="modal-bg" id="priceReviewModalBg"><div class="modal" style="width:540px">
+  <div class="mh"><div class="mh-ico"><svg viewBox="0 0 24 24" fill="none"><path d="m3 17 6-6 4 4 8-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 7h6v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><h3>Цена закупки изменилась</h3><small>Проверьте розничные цены — мы предложили новые с той же наценкой</small></div></div>
+  <div id="prBody"></div>
+  <div class="modal-actions"><button class="btn secondary" onclick="closeModal('priceReviewModalBg')">Оставить как есть</button><button class="btn" onclick="savePriceReview()">Сохранить цены</button></div>
+</div></div>
 <div class="toast" id="toast"></div>
 <div class="zoom-hud" id="zoomHud"><span id="zoomHudVal">100%</span><i><b id="zoomHudBar"></b></i></div>
 
@@ -2292,6 +2579,589 @@ function renderDashboardABC(){
 }
 /* =================== конец ABC-АНАЛИЗА =================== */
 
+/* ===================== ЗАКАЗЫ ПОСТАВЩИКАМ / АВТО-ЗАКАЗ ===================== */
+if(!Array.isArray(db.orders)) db.orders = [];
+function aoCfg(){
+  const d={days:14, period:30, urgent:3, soon:6, onlyAB:false, hideNoSales:true, morning:true, morningTime:'07:00',
+    navBadge:true, supplierId:'', limit:0, waTemplate:'Здравствуйте! Нужно к заказу:\n{список}\nСпасибо!', lastCalc:0};
+  db.settings.autoOrder = Object.assign(d, db.settings.autoOrder||{});
+  return db.settings.autoOrder;
+}
+function aoState(){
+  if(!window.__ao){ const c=aoCfg(); window.__ao={days:c.days, filter:'all', onlyAB:c.onlyAB, sel:{}, qty:{}, supplierId:c.supplierId||'', split:false, consign:false}; }
+  return window.__ao;
+}
+function aoNum(v, d){ return Number(v||0).toLocaleString('ru-RU',{maximumFractionDigits:d||0}); }
+function money(v){ return fmt(v)+' '+cur(); }
+function aoSalesMap(days){
+  const start=new Date(); start.setHours(0,0,0,0); start.setDate(start.getDate()-(days-1));
+  const m={};
+  db.transactions.forEach(t=>{
+    if(t.type!=='sale') return;
+    const d=abcTxDate(t); if(!d || d<start) return;
+    m[t.productId]=(m[t.productId]||0)+Number(t.qty||0);
+  });
+  return m;
+}
+function aoInTransit(){
+  const m={};
+  db.orders.forEach(o=>{
+    if(o.status!=='pending' && o.status!=='partial') return;
+    o.items.forEach(it=>{ const left=it.qty-(it.received||0); if(left>0) m[it.productId]=(m[it.productId]||0)+left; });
+  });
+  return m;
+}
+function aoCompute(days, onlyAB){
+  const c=aoCfg();
+  const period=Number(c.period)||30;
+  const sold=aoSalesMap(period), sold60=aoSalesMap(60), transit=aoInTransit();
+  const abc={}; computeABC(String(period),'amount').rows.forEach(r=>abc[r.id]=r.cls);
+  const rows=[];
+  db.products.forEach(p=>{
+    const stock=Math.max(0, Number(p.qty||0)), minQty=Number(p.minQty||0);
+    const perDay=Math.max(0, sold[p.id]||0)/period;
+    const cls=abc[p.id]||'N';
+    if(c.hideNoSales && !((sold60[p.id]||0)>0)) return;
+    if(onlyAB && cls!=='A' && cls!=='B') return;
+    const daysLeft = perDay>0 ? stock/perDay : null;
+    const target=Math.max(Math.ceil(perDay*days), stock<=minQty ? minQty+1 : 0);
+    const tr=transit[p.id]||0;
+    const need=target-stock-tr;
+    if(need<=0) return;
+    let level;
+    if(daysLeft===null) level = stock===0 ? 'urgent' : 'soon';
+    else level = daysLeft<c.urgent ? 'urgent' : daysLeft<c.soon ? 'soon' : 'ok';
+    rows.push({id:p.id, name:p.name, cat:p.category?catName(p.category):'', cls, stock, perDay, daysLeft, need, transit:tr, level, cost:Number(p.cost||0), price:Number(p.price||0)});
+  });
+  const ord={urgent:0, soon:1, ok:2};
+  rows.sort((a,b)=>ord[a.level]-ord[b.level] || (a.daysLeft===null?-1:a.daysLeft)-(b.daysLeft===null?-1:b.daysLeft) || a.name.localeCompare(b.name));
+  return rows;
+}
+function aoRows(){
+  const st=aoState();
+  return aoCompute(st.days, st.onlyAB).map(r=>({...r, q: st.qty[r.id]!=null ? st.qty[r.id] : r.need, on: st.sel[r.id]!==false}));
+}
+function aoTotals(rows){
+  const s=rows.filter(r=>r.on && r.q>0);
+  const cost=s.reduce((a,r)=>a+r.q*r.cost,0), rev=s.reduce((a,r)=>a+r.q*r.price,0);
+  return {n:s.length, units:s.reduce((a,r)=>a+r.q,0), cost:r2(cost), rev:r2(rev), profit:r2(rev-cost), margin: rev>0 ? Math.round((rev-cost)/rev*100) : 0, list:s};
+}
+function aoLevelText(l){ return {urgent:'срочно', soon:'скоро', ok:'в норме'}[l]; }
+function aoDaysText(r){ if(r.daysLeft===null) return r.stock===0 ? '0 дн.' : 'нет продаж'; if(r.daysLeft>=365) return '> года'; return Math.floor(r.daysLeft)+' дн.'; }
+function aoSet(k, v){ aoState()[k]=v; renderAutoOrder(); }
+function aoSetCfg(k, v){
+  const c=aoCfg(); c[k]=v;
+  const st=aoState();
+  if(k==='days') st.days=v;
+  if(k==='onlyAB') st.onlyAB=v;
+  if(k==='supplierId') st.supplierId=v;
+  saveDB(); renderAutoOrder();
+  if(document.getElementById('aoSettingsModalBg').classList.contains('show') && (k==='days'||k==='onlyAB'||k==='hideNoSales'||k==='morning'||k==='navBadge')) renderAoSettings();
+}
+function aoToggle(id, on){ aoState().sel[id]=on; renderAutoOrder(); }
+function aoToggleAll(on){ const st=aoState(); aoRowsFiltered().forEach(r=>st.sel[r.id]=on); renderAutoOrder(); }
+function aoStep(id, d){ const r=(window.__aoRows||[]).find(x=>x.id===id); if(!r) return; aoSetQty(id, r.q+d); }
+function aoSetQty(id, v){
+  const st=aoState(); let q=Math.max(0, Math.round(parseFloat(v)||0));
+  st.qty[id]=q; if(q>0 && st.sel[id]===false) st.sel[id]=true;
+  renderAutoOrder();
+}
+function aoRowsFiltered(){ const f=aoState().filter; return (window.__aoRows||[]).filter(r=>f==='all' || r.level===f); }
+function aoRecalc(silent){
+  const st=aoState(); st.sel={}; st.qty={};
+  aoCfg().lastCalc=Date.now(); saveDB();
+  renderAutoOrder(); aoNavBadges();
+  if(!silent) toast('Список пересчитан по последним продажам');
+}
+function aoMorningCheck(){
+  const c=aoCfg(); if(!c.morning) return;
+  const pr=String(c.morningTime||'07:00').split(':');
+  const at=new Date(); at.setHours(+pr[0]||0, +pr[1]||0, 0, 0);
+  if(Date.now()>=at.getTime() && (c.lastCalc||0)<at.getTime()) aoRecalc(true);
+}
+setInterval(aoMorningCheck, 60000);
+setTimeout(aoMorningCheck, 2500);
+
+function aoNavBadges(){
+  const set=(id,n)=>{
+    const b=document.getElementById('nav-'+id); if(!b) return;
+    let s=b.querySelector('.nav-badge');
+    if(!n){ if(s) s.remove(); return; }
+    if(!s){ s=document.createElement('span'); s.className='nav-badge'; b.appendChild(s); }
+    s.textContent=n;
+  };
+  const c=aoCfg();
+  set('autoorder', c.navBadge ? aoCompute(aoState().days, aoState().onlyAB).length : 0);
+  set('purchase', db.orders.filter(o=>o.status==='pending'||o.status==='partial').length);
+}
+function supplierOptions(sel, val){
+  sel.innerHTML='<option value="">Основной поставщик</option>'+db.suppliers.map(s=>`<option value="${s.id}">${escapeHtml(s.name)}</option>`).join('');
+  sel.value = db.suppliers.some(s=>s.id===val) ? val : '';
+}
+function renderAutoOrder(){
+  aoNavBadges();
+  if(!document.getElementById('page-autoorder')) return;
+  const c=aoCfg(), st=aoState();
+  const rows=aoRows(); window.__aoRows=rows;
+  const t=aoTotals(rows);
+  document.getElementById('aoMorning').checked=!!c.morning;
+  document.getElementById('aoOnlyAB').checked=!!st.onlyAB;
+  document.getElementById('aoCNeed').textContent=rows.length;
+  document.getElementById('aoCUnits').textContent=aoNum(t.units);
+  document.getElementById('aoCCost').textContent=money(t.cost);
+  document.getElementById('aoCProfit').textContent=money(t.profit);
+  document.getElementById('aoCalcNote').textContent = c.lastCalc ? 'пересчитано '+new Date(c.lastCalc).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '';
+  document.getElementById('aoDaysSeg').innerHTML=[7,14,21,30].map(d=>`<button class="${st.days===d?'active':''}" onclick="aoSet('days',${d})">${d} дн.</button>`).join('');
+  const cnt={all:rows.length, urgent:0, soon:0, ok:0}; rows.forEach(r=>cnt[r.level]++);
+  document.getElementById('aoChips').innerHTML=[['all','Все'],['urgent','Срочно'],['soon','Скоро'],['ok','В норме']]
+    .map(([k,l])=>`<button class="ao-chip ${k} ${st.filter===k?'active':''}" onclick="aoSet('filter','${k}')">${l} · ${cnt[k]}</button>`).join('');
+  const list=aoRowsFiltered();
+  const body=document.getElementById('aoBody');
+  if(!list.length){
+    const why = !db.products.length ? 'Сначала добавьте товары в разделе «Товары».'
+      : rows.length ? 'В этой группе пусто — выберите «Все».'
+      : Object.keys(aoInTransit()).length ? 'Всё нужное уже заказано и едет — смотрите раздел «Приход».'
+      : (c.hideNoSales ? 'Всё в наличии на выбранный запас. Если продаж ещё не было, выключите «Скрывать товары без продаж» в настройках.' : 'Всё в наличии на выбранный запас дней.');
+    body.innerHTML=`<tr><td colspan="6"><div class="ao-empty"><b>Докупать нечего</b>${why}</div></td></tr>`;
+  } else {
+    body.innerHTML=list.map(r=>`<tr class="${r.level==='urgent'?'ao-urgent':''} ${r.on?'':'ao-off'}">
+      <td><input type="checkbox" class="ao-check" ${r.on?'checked':''} onchange="aoToggle('${r.id}',this.checked)"></td>
+      <td><b style="font-weight:600">${escapeHtml(r.name)}</b><small>${escapeHtml([r.cat, r.cls==='N'?'без продаж':'класс '+r.cls].filter(Boolean).join(' · '))}</small>${r.transit?`<small class="ao-transit">ещё ${r.transit} шт. в пути по заказу</small>`:''}</td>
+      <td><b>${aoNum(r.stock)} шт.</b></td>
+      <td style="color:var(--text-2)">${aoNum(r.perDay,1)} в день</td>
+      <td><span class="ao-st ${r.level}">${aoDaysText(r)} · ${aoLevelText(r.level)}</span></td>
+      <td style="text-align:center"><div class="qty-step"><button onclick="aoStep('${r.id}',-1)">−</button><input type="number" min="0" value="${r.q}" onchange="aoSetQty('${r.id}',this.value)"><button onclick="aoStep('${r.id}',1)">+</button></div></td>
+    </tr>`).join('');
+  }
+  const all=document.getElementById('aoAll');
+  all.checked = list.length>0 && list.every(r=>r.on);
+  all.indeterminate = list.some(r=>r.on) && !all.checked;
+  document.getElementById('aoFootSel').textContent=`Выбрано ${t.n} из ${rows.length} позиций`;
+  document.getElementById('aoSPos').textContent=t.n;
+  document.getElementById('aoSCost').textContent=money(t.cost);
+  document.getElementById('aoSRev').textContent=money(t.rev);
+  document.getElementById('aoSProfit').textContent=money(t.profit);
+  document.getElementById('aoSMargin').textContent='маржа '+t.margin+'%';
+  supplierOptions(document.getElementById('aoSupplier'), st.supplierId);
+  document.getElementById('aoSplit').checked=!!st.split;
+  document.getElementById('aoConsign').checked=!!st.consign;
+  const lim=document.getElementById('aoLimit');
+  if(c.limit>0 && t.cost>c.limit){ lim.style.display='block'; lim.textContent=`Сумма закупки больше лимита (${money(c.limit)}) на ${money(t.cost-c.limit)}`; }
+  else lim.style.display='none';
+  document.getElementById('aoHow').innerHTML=[
+    `Берём продажи за последние ${c.period} дней и считаем, сколько уходит в день`,
+    'Смотрим, на сколько дней хватит текущего остатка',
+    `Докупаем до запаса на ${st.days} дн. Заказ = нужно − остаток − уже в пути`,
+    'Вы проверяете и подтверждаете. Без вашего «ОК» заказ не уходит'
+  ].map((s,i)=>`<li><span>${i+1}</span><div>${s}</div></li>`).join('');
+}
+
+/* ----- настройки авто-заказа ----- */
+function openAoSettings(){ renderAoSettings(); openModal('aoSettingsModalBg'); }
+function renderAoSettings(){
+  const c=aoCfg();
+  const sw=(k)=>`<label class="sw"><input type="checkbox" ${c[k]?'checked':''} onchange="aoSetCfg('${k}',this.checked)"><i></i></label>`;
+  const times=[]; for(let h=5; h<=12; h++){ times.push(String(h).padStart(2,'0')+':00'); if(h<12) times.push(String(h).padStart(2,'0')+':30'); }
+  document.getElementById('aoSetBody').innerHTML=`
+    <div class="set-sec">Расчёт</div>
+    <div class="set-row"><div><b>Запас по умолчанию</b><small>На сколько дней докупать товар</small></div><div class="abc-seg">${[7,14,21,30].map(d=>`<button class="${c.days===d?'active':''}" onclick="aoSetCfg('days',${d});renderAoSettings()">${d} дн.</button>`).join('')}</div></div>
+    <div class="set-row"><div><b>Период продаж</b><small>За сколько дней считать, сколько товар уходит в день</small></div><select class="set-in" onchange="aoSetCfg('period',+this.value)">${[7,14,30,60,90].map(d=>`<option value="${d}" ${+c.period===d?'selected':''}>${d} дней</option>`).join('')}</select></div>
+    <div class="set-sec">Срочность</div>
+    <div class="set-row"><div><span class="set-tag ao-st urgent">срочно</span><b style="display:inline">Хватит меньше чем на</b></div><div class="r"><input class="set-in" type="number" min="1" value="${c.urgent}" onchange="aoSetCfg('urgent',Math.max(1,+this.value||1))"> дн.</div></div>
+    <div class="set-row"><div><span class="set-tag ao-st soon">скоро</span><b style="display:inline">Хватит меньше чем на</b></div><div class="r"><input class="set-in" type="number" min="1" value="${c.soon}" onchange="aoSetCfg('soon',Math.max(1,+this.value||1))"> дн.</div></div>
+    <div class="set-sec">Что включать в список</div>
+    <div class="set-row"><div><b>Только ходовые (A, B)</b><small>По ABC-анализу: товары класса C не попадают в заказ</small></div>${sw('onlyAB')}</div>
+    <div class="set-row"><div><b>Скрывать товары без продаж</b><small>Если за последние 60 дней не продан ни разу</small></div>${sw('hideNoSales')}</div>
+    <div class="set-sec">Пересчёт</div>
+    <div class="set-row"><div><b>Пересчитывать каждое утро</b><small>Список обновится сам, заказ не отправляется</small></div><div class="r"><select class="set-in" onchange="aoSetCfg('morningTime',this.value)">${times.map(t=>`<option ${c.morningTime===t?'selected':''}>${t}</option>`).join('')}</select>${sw('morning')}</div></div>
+    <div class="set-row"><div><b>Счётчик в меню</b><small>Красное число рядом с пунктом «Авто-заказ»</small></div>${sw('navBadge')}</div>
+    <div class="set-sec">Заказ</div>
+    <div class="set-row"><div><b>Поставщик по умолчанию</b><small>Подставляется при оформлении заказа</small></div><select class="set-in" id="aoSetSup" onchange="aoSetCfg('supplierId',this.value)"></select></div>
+    <div class="set-row"><div><b>Лимит суммы закупки</b><small>Предупредим, если заказ больше этой суммы</small></div><div class="r"><input class="set-in" type="number" min="0" style="width:120px;text-align:right" placeholder="Не задан" value="${c.limit||''}" onchange="aoSetCfg('limit',Math.max(0,+this.value||0))"> ${cur()}</div></div>
+    <div style="padding:13px 0 0"><b style="font-size:14px">Текст для WhatsApp</b><small style="display:block;color:var(--muted);font-size:12px;margin:2px 0 10px">Так будет выглядеть список, который вы отправите поставщику. <b>{список}</b> — сюда подставятся товары.</small>
+      <textarea class="set-in" onchange="aoSetCfg('waTemplate',this.value)" oninput="aoCfg().waTemplate=this.value;document.getElementById('aoWaPrev').textContent=orderText(aoPreviewItems())">${escapeHtml(c.waTemplate)}</textarea>
+      <div class="field-hint" style="margin:10px 0 0;white-space:pre-line" id="aoWaPrev"></div></div>`;
+  supplierOptions(document.getElementById('aoSetSup'), c.supplierId);
+  document.getElementById('aoWaPrev').textContent=orderText(aoPreviewItems());
+}
+function aoPreviewItems(){
+  const t=aoTotals(window.__aoRows||aoRows());
+  const l=t.list.slice(0,3).map(r=>({name:r.name, qty:r.q}));
+  return l.length ? l : [{name:'Экран A12', qty:5},{name:'Аккумулятор A12', qty:3}];
+}
+
+/* ----- тексты / WhatsApp / PDF ----- */
+function orderText(items, num){
+  const lines=items.map(it=>`• ${it.name} — ${it.qty} шт.`).join('\n');
+  let tpl=aoCfg().waTemplate || '{список}';
+  if(!tpl.includes('{список}')) tpl+='\n{список}';
+  return tpl.replace('{список}', lines).replace(/\{номер\}/g, num?('№'+num):'').replace(/\{магазин\}/g, db.settings.shopName||'');
+}
+function openWhatsApp(phone, text){
+  const digits=String(phone||'').replace(/[^\d]/g,'');
+  window.open(`https://wa.me/${digits}?text=${encodeURIComponent(text)}`, '_blank');
+}
+function copyText(text){
+  const done=()=>toast('Текст скопирован');
+  if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(done).catch(()=>fallback()); }
+  else fallback();
+  function fallback(){ const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); done(); }catch(e){ toast('Не удалось скопировать'); } ta.remove(); }
+}
+function orderPdfHtml(o){
+  const s=db.settings, total=o.items.reduce((a,it)=>a+it.qty*it.cost,0), units=o.items.reduce((a,it)=>a+it.qty,0);
+  const d=new Date(o.created||Date.now());
+  const rows=o.items.map((it,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(it.name)}</td><td class="n">${it.qty}</td><td class="n">${fmt(it.cost)}</td><td class="n">${fmt(it.qty*it.cost)}</td></tr>`).join('');
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Заказ ${o.num?'№'+o.num:''}</title><style>
+    body{font-family:'Segoe UI',Arial,sans-serif;color:#111827;margin:36px;font-size:13px}
+    h1{font-size:22px;margin:0 0 4px} .muted{color:#6b7280} .top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #4f46e5;padding-bottom:14px;margin-bottom:18px}
+    .shop{font-weight:700;font-size:16px;color:#4f46e5} table{width:100%;border-collapse:collapse;margin-top:12px}
+    th{background:#eef2ff;text-align:left;padding:9px 10px;font-size:12px;color:#374151} td{padding:9px 10px;border-bottom:1px solid #e5e7eb}
+    .n{text-align:right;white-space:nowrap} .tot td{font-weight:700;border-bottom:none;font-size:14px} .meta div{margin:3px 0}
+  </style></head><body>
+    <div class="top"><div><div class="shop">${escapeHtml(s.shopName||'OLED SERVICE')}</div>${s.phone?`<div class="muted">Тел.: ${escapeHtml(s.phone)}</div>`:''}</div>
+    <div style="text-align:right"><h1>Заказ поставщику ${o.num?'№'+o.num:''}</h1><div class="muted">${d.toLocaleDateString('ru-RU')} ${d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}</div></div></div>
+    <div class="meta"><div><b>Поставщик:</b> ${escapeHtml(o.supplierName||'Основной поставщик')}</div>${o.consign?'<div><b>Условия:</b> консигнация (оплата после продажи)</div>':''}</div>
+    <table><thead><tr><th>№</th><th>Товар</th><th class="n">Кол-во</th><th class="n">Цена, ${cur()}</th><th class="n">Сумма, ${cur()}</th></tr></thead>
+    <tbody>${rows}<tr class="tot"><td></td><td>Итого: ${o.items.length} поз.</td><td class="n">${units} шт.</td><td></td><td class="n">${fmt(total)} ${cur()}</td></tr></tbody></table>
+  </body></html>`;
+}
+function downloadOrderPdf(o){
+  const html=orderPdfHtml(o);
+  const name=`Заказ_${o.num?o.num+'_':''}${new Date().toLocaleDateString('ru-RU').replace(/\./g,'-')}.pdf`;
+  if(window.oledNative && window.oledNative.savePdf){
+    window.oledNative.savePdf(html, name).then(r=>{ if(r && r.ok) toast('PDF сохранён'); else if(r && r.error) toast('Ошибка PDF: '+r.error); }).catch(()=>printHtml(html));
+  } else printHtml(html);
+}
+function printHtml(html){
+  const f=document.createElement('iframe'); f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';
+  document.body.appendChild(f);
+  f.contentDocument.open(); f.contentDocument.write(html); f.contentDocument.close();
+  setTimeout(()=>{ try{ f.contentWindow.focus(); f.contentWindow.print(); }catch(e){} setTimeout(()=>f.remove(), 2000); }, 300);
+  toast('Выберите «Сохранить как PDF» в окне печати');
+}
+function aoDraftOrder(){
+  const t=aoTotals(window.__aoRows||aoRows()), sup=aoSupplier();
+  return {num:0, created:Date.now(), supplierName:sup?sup.name:'Основной поставщик', phone:sup?sup.phone:'', consign:aoState().consign, items:t.list.map(r=>({productId:r.id, name:r.name, qty:r.q, cost:r.cost, price:r.price}))};
+}
+function aoWhatsApp(){ const o=aoDraftOrder(); if(!o.items.length){ toast('Выберите хотя бы одну позицию'); return; } openWhatsApp(o.phone, orderText(o.items)); }
+function aoPdf(){ const o=aoDraftOrder(); if(!o.items.length){ toast('Выберите хотя бы одну позицию'); return; } downloadOrderPdf(o); }
+
+/* ----- оформление заказа ----- */
+function aoSupplier(){ const id=aoState().supplierId; return db.suppliers.find(s=>s.id===id)||null; }
+function lastSupplierOf(pid){
+  for(let i=db.transactions.length-1; i>=0; i--){ const t=db.transactions[i]; if(t.type==='purchase' && t.productId===pid && t.supplierId) return t.supplierId; }
+  return '';
+}
+function aoGroups(t){
+  const st=aoState(), def=aoSupplier();
+  if(!st.split) return [{sup:def, items:t.list}];
+  const m=new Map();
+  t.list.forEach(r=>{
+    let sid=lastSupplierOf(r.id); if(!db.suppliers.some(s=>s.id===sid)) sid = def ? def.id : '';
+    if(!m.has(sid)) m.set(sid, {sup:db.suppliers.find(s=>s.id===sid)||null, items:[]});
+    m.get(sid).items.push(r);
+  });
+  return [...m.values()];
+}
+function aoOpenConfirm(){
+  const t=aoTotals(window.__aoRows||aoRows());
+  if(!t.n){ toast('Выберите хотя бы одну позицию'); return; }
+  const groups=aoGroups(t), c=aoCfg();
+  const supTxt = groups.length>1 ? groups.map(g=>g.sup?g.sup.name:'Основной поставщик').join(', ') : (groups[0].sup?groups[0].sup.name:'Основной поставщик');
+  document.getElementById('ocBody').innerHTML=`
+    <div class="kv-row"><span>Поставщик</span><b>${escapeHtml(supTxt)}</b></div>
+    ${groups.length>1?`<div class="kv-row"><span>Заказов</span><b>${groups.length}</b></div>`:''}
+    <div class="kv-row"><span>Позиций</span><b>${t.n}</b></div>
+    <div class="kv-row"><span>Штук</span><b>${aoNum(t.units)}</b></div>
+    <div class="kv-row"><span>Сумма закупки</span><b>${money(t.cost)}</b></div>
+    <div class="kv-row"><span>Ожидаемая прибыль</span><b class="g">${money(t.profit)}</b></div>
+    ${aoState().consign?'<div class="kv-row"><span>Условия</span><b>Консигнация</b></div>':''}
+    ${c.limit>0 && t.cost>c.limit?`<div class="ao-limit" style="display:block">Внимание: сумма больше лимита ${money(c.limit)}</div>`:''}`;
+  openModal('orderConfirmModalBg');
+}
+function createOrder(sup, items, consign){
+  db.settings.orderSeq=(db.settings.orderSeq||0)+1;
+  const o={id:uid(), num:db.settings.orderSeq, supplierId:sup?sup.id:'', supplierName:sup?sup.name:'Основной поставщик', phone:sup?(sup.phone||''):'',
+    created:Date.now(), status:'pending', consign:!!consign, items:items.map(it=>({...it, received:0}))};
+  db.orders.push(o); return o;
+}
+function aoPlaceOrder(){
+  const t=aoTotals(aoRows());
+  if(!t.n){ closeModal('orderConfirmModalBg'); return; }
+  const st=aoState();
+  const created=aoGroups(t).map(g=>createOrder(g.sup, g.items.map(r=>({productId:r.id, name:r.name, qty:r.q, cost:r.cost, price:r.price})), st.consign));
+  st.sel={}; st.qty={};
+  saveDB(); closeModal('orderConfirmModalBg'); renderAll();
+  showOrderDone(created);
+}
+function orderSum(o){ return r2(o.items.reduce((a,it)=>a+it.qty*it.cost,0)); }
+function orderUnits(o){ return o.items.reduce((a,it)=>a+it.qty,0); }
+function showOrderDone(orders){
+  document.getElementById('odBody').innerHTML=orders.map(o=>`
+    <div class="od-block">
+      ${orders.length===1?'<div class="mh-ico ok" style="margin-bottom:14px"><svg viewBox="0 0 24 24" fill="none"><path d="m5 12.5 4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>':''}
+      <h3 style="margin:0">Заказ №${o.num} оформлен</h3>
+      <div class="od-meta"><span class="po-st pending">Ожидается</span>${escapeHtml(o.supplierName)} · ${o.items.length} поз. · ${orderUnits(o)} шт. · ${money(orderSum(o))}</div>
+      <div style="font-weight:600;font-size:13.5px;margin-bottom:10px">Теперь отправьте список поставщику</div>
+      <div class="od-btns">
+        <button class="btn wa full" onclick="orderWa('${o.id}')"><svg viewBox="0 0 24 24" fill="none" style="width:16px;height:16px"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19l-4 1Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg> Отправить списком в WhatsApp</button>
+        <button class="btn secondary" onclick="orderPdf('${o.id}')">Скачать PDF</button>
+        <button class="btn secondary" onclick="orderCopy('${o.id}')">Копировать текст</button>
+      </div>
+    </div>`).join('');
+  document.getElementById('odGoBtn').onclick=()=>{ closeModal('orderDoneModalBg'); const s=poState(); s.mode='list'; s.tab='orders'; s.sel=orders[0].id; goPage('purchase'); };
+  openModal('orderDoneModalBg');
+}
+function orderById(id){ return db.orders.find(o=>o.id===id); }
+function orderWa(id){ const o=orderById(id); if(o) openWhatsApp(o.phone || (db.suppliers.find(s=>s.id===o.supplierId)||{}).phone, orderText(o.items, o.num)); }
+function orderPdf(id){ const o=orderById(id); if(o) downloadOrderPdf(o); }
+function orderCopy(id){ const o=orderById(id); if(o) copyText(orderText(o.items, o.num)); }
+
+/* ===================== ПРИХОД ===================== */
+function poState(){ return window.__po || (window.__po={tab:'orders', mode:'list', sel:null, recv:{}, expand:false}); }
+const PO_ST={pending:'Ожидается', partial:'Частично получен', received:'Получен', cancelled:'Отменён', closed:'Закрыт'};
+function poSet(k,v){ const s=poState(); s[k]=v; if(k==='sel') s.expand=false; renderPurchase(); }
+function supplierDebt(name, phone, amount, note){
+  if(!(amount>0)) return;
+  let d=db.debts.find(x=>x.type==='out' && x.name.toLowerCase()===String(name).toLowerCase());
+  if(!d){ d={id:uid(), type:'out', name, phone:phone||'', due:'', created:Date.now(), ops:[]}; db.debts.push(d); }
+  d.ops.push(debtNowOp('debt', r2(amount), note));
+}
+function renderPurchase(){
+  if(!document.getElementById('page-purchase')) return;
+  const st=poState();
+  document.getElementById('poListView').style.display = st.mode==='list' ? '' : 'none';
+  document.getElementById('poNewView').style.display = st.mode==='new' ? '' : 'none';
+  renderPurchaseHist();
+  if(st.mode==='new'){ renderPoNew(); return; }
+  const open=db.orders.filter(o=>o.status==='pending'||o.status==='partial').length;
+  const hist=db.transactions.filter(t=>t.type==='purchase').length;
+  document.getElementById('poTabs').innerHTML=`<button class="ao-chip ${st.tab==='orders'?'active':''}" onclick="poSet('tab','orders')">Заказы поставщикам · ${db.orders.length}${open?` (ждём ${open})`:''}</button><button class="ao-chip ${st.tab==='history'?'active':''}" onclick="poSet('tab','history')">История приходов · ${hist}</button>`;
+  document.getElementById('poOrdersTab').style.display = st.tab==='orders' ? '' : 'none';
+  document.getElementById('poHistTab').style.display = st.tab==='history' ? '' : 'none';
+  if(st.tab!=='orders') return;
+  const ord={pending:0, partial:0, received:1, closed:1, cancelled:2};
+  const list=db.orders.slice().sort((a,b)=>(ord[a.status]-ord[b.status]) || b.created-a.created);
+  if(!list.some(o=>o.id===st.sel)) st.sel = list[0] ? list[0].id : null;
+  const lb=document.getElementById('poOrderList');
+  lb.innerHTML = list.length ? list.map(o=>{
+    const d=new Date(o.created), isToday=d.toDateString()===new Date().toDateString();
+    const when = isToday ? 'сегодня, '+d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}) : d.toLocaleDateString('ru-RU');
+    const recvPos=o.items.filter(it=>(it.received||0)>=it.qty).length;
+    const recvUnits=o.items.reduce((a,it)=>a+Math.min(it.qty, it.received||0),0);
+    const mid = o.status==='partial' ? `Получено ${recvPos} из ${o.items.length} позиций` : `${o.items.length} позиций · ${orderUnits(o)} шт.`;
+    return `<div class="po-card ${o.id===st.sel?'active':''} ${o.status==='cancelled'?'dim':''}" onclick="poSet('sel','${o.id}')">
+      <div class="po-card-top"><b>Заказ №${o.num}</b><span class="po-st ${o.status}">${PO_ST[o.status]}</span></div>
+      <div class="po-meta">${escapeHtml(o.supplierName)} · ${when}${o.consign?' · консигнация':''}</div>
+      <div class="po-bottom"><span>${mid}</span><b>${money(orderSum(o))}</b></div>
+      ${o.status==='partial'?`<div class="po-prog"><i style="width:${Math.round(recvUnits/Math.max(1,orderUnits(o))*100)}%"></i></div>`:''}
+    </div>`;
+  }).join('') : `<div class="panel"><div class="ao-empty"><b>Заказов пока нет</b>Оформите заказ в разделе «Авто-заказ» или нажмите «Приход без заказа».<br><button class="btn small" style="margin-top:12px" onclick="goPage('autoorder')">Открыть авто-заказ</button></div></div>`;
+  renderPoDetail();
+}
+function curOrder(){ return orderById(poState().sel); }
+function poRecvMap(o){ const s=poState(); return s.recv[o.id] || (s.recv[o.id]={}); }
+function poLeft(it){ return Math.max(0, it.qty-(it.received||0)); }
+function poRecvVal(o, i){ const m=poRecvMap(o); return m[i]!=null ? m[i] : poLeft(o.items[i]); }
+function poStep(i, d){ const o=curOrder(); if(!o) return; poSetRecv(i, poRecvVal(o,i)+d); }
+function poSetRecv(i, v){ const o=curOrder(); if(!o) return; poRecvMap(o)[i]=Math.max(0, Math.round(parseFloat(v)||0)); renderPoDetail(); }
+function renderPoDetail(){
+  const box=document.getElementById('poDetail'); if(!box) return;
+  const o=curOrder();
+  if(!o){ box.innerHTML='<div class="ao-empty"><b>Выберите заказ</b>Здесь появится список товаров для приёма.</div>'; return; }
+  const st=poState(), open=o.status==='pending'||o.status==='partial';
+  const mini=`<div class="po-mini-actions"><button class="btn small secondary" onclick="orderWa('${o.id}')">WhatsApp</button><button class="btn small secondary" onclick="orderPdf('${o.id}')">PDF</button><button class="btn small secondary" onclick="orderCopy('${o.id}')">Копировать текст</button></div>`;
+  if(!open){
+    const got=o.items.reduce((a,it)=>a+(it.received||0),0);
+    box.innerHTML=`<div class="po-detail-head"><div><h3>Заказ №${o.num}</h3><small>${escapeHtml(o.supplierName)} · ${new Date(o.created).toLocaleDateString('ru-RU')}</small></div><span class="po-st ${o.status}">${PO_ST[o.status]}</span></div>${mini}
+      <div class="table-wrap"><table><thead><tr><th>Товар</th><th style="text-align:center">Заказано</th><th style="text-align:center">Получено</th></tr></thead><tbody>
+      ${o.items.map(it=>`<tr><td>${escapeHtml(it.name)}</td><td style="text-align:center">${it.qty}</td><td style="text-align:center;font-weight:700;${(it.received||0)<it.qty?'color:#b45309':''}">${it.received||0}</td></tr>`).join('')}
+      </tbody></table></div>
+      <div class="po-total-row"><span>Получено</span><b>${got} из ${orderUnits(o)} шт.</b></div>`;
+    return;
+  }
+  const idx=o.items.map((it,i)=>i).filter(i=>poLeft(o.items[i])>0);
+  const show = st.expand ? idx : idx.slice(0,5);
+  let got=0, want=0; idx.forEach(i=>{ got+=poRecvVal(o,i); want+=poLeft(o.items[i]); });
+  const rows=show.map(i=>{
+    const it=o.items[i], left=poLeft(it), v=poRecvVal(o,i), diff=v-left;
+    return `<tr class="${diff<0?'po-warn':''}"><td><b style="font-weight:600">${escapeHtml(it.name)}</b>${diff<0?`<small class="warn">Привезли на ${-diff} меньше</small>`:diff>0?`<small class="more">Привезли на ${diff} больше</small>`:''}${it.received?`<small style="color:var(--muted)">уже получено ${it.received} из ${it.qty}</small>`:''}</td>
+      <td style="text-align:center">${left}</td>
+      <td style="text-align:center"><div class="qty-step ${diff<0?'warn':''}"><button onclick="poStep(${i},-1)">−</button><input type="number" min="0" value="${v}" onchange="poSetRecv(${i},this.value)"><button onclick="poStep(${i},1)">+</button></div></td></tr>`;
+  }).join('');
+  const more = idx.length>5 ? `<button class="po-more" onclick="poSet('expand',${!st.expand})">${st.expand?'Свернуть':'и ещё '+(idx.length-5)+' позиции…'}</button>` : '';
+  box.innerHTML=`<div class="po-detail-head"><div><h3>Приём заказа №${o.num}</h3><small>Укажите, сколько реально привезли</small></div><span class="po-st ${o.status}">${PO_ST[o.status]}</span></div>${mini}
+    <div class="table-wrap"><table><thead><tr><th>Товар</th><th style="text-align:center">${o.status==='partial'?'Осталось':'Заказано'}</th><th style="text-align:center">Получено</th></tr></thead><tbody>${rows}</tbody></table></div>${more}
+    <div class="po-total-row"><span>Получено</span><b>${got} из ${want} шт.</b></div>
+    <div class="info-box"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v5M12 8v.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>${o.consign?'После приёма остатки на складе вырастут, а долг поставщику увеличится на стоимость полученного. Платите после продаж.':'После приёма остатки на складе вырастут, а сумма запишется в закупки.'}</span></div>
+    <div class="po-actions">
+      <button class="btn green" onclick="poAccept(false)"><svg viewBox="0 0 24 24" fill="none"><path d="m5 12.5 4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Принять заказ</button>
+      <button class="btn secondary" onclick="poAccept(true)">Принять всё как в заказе</button>
+      <button class="btn outline-danger" onclick="poCancelOrder()">${o.status==='partial'?'Закрыть заказ':'Отменить заказ'}</button>
+    </div>
+    <div class="po-note">${o.status==='partial'?'«Закрыть заказ» — остаток больше не ждём. ':''}Если привезли не всё, заказ получит статус «Частично получен», и остаток можно принять позже.</div>`;
+}
+function poAccept(all){
+  const o=curOrder(); if(!o) return;
+  const now=new Date(), date=now.toLocaleDateString('ru-RU'), time=now.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+  let units=0, sum=0;
+  o.items.forEach((it,i)=>{
+    const left=poLeft(it); if(left<=0) return;
+    const q = all ? left : poRecvVal(o,i);
+    if(!(q>0)) return;
+    const p=db.products.find(x=>x.id===it.productId); if(!p) return;
+    p.qty=(p.qty||0)+q; if(it.cost>0) p.cost=it.cost;
+    it.received=(it.received||0)+q;
+    db.transactions.push({id:uid(), type:'purchase', productId:p.id, productName:p.name, qty:q, price:it.cost, total:r2(q*it.cost),
+      supplierId:o.supplierId, supplierName:o.supplierName, orderId:o.id, orderNum:o.num, consign:o.consign, date, time, ts:now.getTime()});
+    units+=q; sum+=q*it.cost;
+  });
+  if(!units){ toast('Укажите, сколько привезли'); return; }
+  o.status = o.items.every(it=>(it.received||0)>=it.qty) ? 'received' : 'partial';
+  o.receivedAt=now.getTime();
+  if(o.consign) supplierDebt(o.supplierName, o.phone, sum, `Приход по заказу №${o.num} (консигнация)`);
+  delete poState().recv[o.id];
+  saveDB(); renderAll();
+  toast(o.status==='received' ? `Заказ №${o.num} принят: +${units} шт. на склад` : `Принято ${units} шт. Остаток ждём позже`);
+}
+function poCancelOrder(){
+  const o=curOrder(); if(!o) return;
+  const partial=o.status==='partial';
+  if(!confirm(partial ? 'Закрыть заказ? Непривезённый остаток больше не ждём.' : 'Отменить заказ №'+o.num+'?')) return;
+  o.status = partial ? 'closed' : 'cancelled';
+  saveDB(); renderAll(); toast(partial ? 'Заказ закрыт' : 'Заказ отменён');
+}
+
+/* ----- приход без заказа ----- */
+function poDraft(){
+  if(!window.__poDraft){
+    const saved=db.settings.purchaseDraft;
+    window.__poDraft = saved ? JSON.parse(JSON.stringify(saved)) : {supplierId:aoCfg().supplierId||'', date:isoToday(), invoice:'', consign:false, items:[]};
+  }
+  return window.__poDraft;
+}
+function poOpenNew(){ poState().mode='new'; poDraft(); renderPurchase(); setTimeout(()=>{ const s=document.getElementById('poSearch'); if(s) s.focus(); }, 60); }
+function poBack(){ poState().mode='list'; renderPurchase(); }
+function poDraftSet(k, v, quiet){ poDraft()[k]=v; if(!quiet) renderPoNew(); }
+function poMatches(q){
+  q=q.trim().toLowerCase(); if(!q) return db.products.slice(0,8);
+  return db.products.filter(p=>`${p.name} ${p.code||''} ${resolveModelName(p.model)} ${p.brand?brandName(p.brand):''}`.toLowerCase().includes(q)).slice(0,10);
+}
+function poSearchRender(){
+  const inp=document.getElementById('poSearch'), res=document.getElementById('poRes');
+  const list=poMatches(inp.value); window.__poRes=list; window.__poHl=0;
+  res.innerHTML = list.length ? list.map((p,i)=>`<button type="button" class="${i===0?'hl':''}" onmousedown="event.preventDefault();poAddItem('${p.id}')"><span>${escapeHtml(p.name)}</span><small>на складе ${p.qty||0} шт. · ${money(p.cost)}</small></button>`).join('')
+    : `<div class="none">Не найдено. Нажмите «+ Новый товар (нет в списке)»</div>`;
+  res.classList.add('show');
+}
+function poSearchKey(e){
+  const list=window.__poRes||[], res=document.getElementById('poRes');
+  if(e.key==='ArrowDown'||e.key==='ArrowUp'){ e.preventDefault(); window.__poHl=Math.max(0,Math.min(list.length-1,(window.__poHl||0)+(e.key==='ArrowDown'?1:-1))); [...res.querySelectorAll('button')].forEach((b,i)=>b.classList.toggle('hl',i===window.__poHl)); }
+  else if(e.key==='Enter'){ e.preventDefault(); const p=list[window.__poHl||0]; if(p) poAddItem(p.id); }
+  else if(e.key==='Escape'){ res.classList.remove('show'); e.target.blur(); }
+}
+document.addEventListener('click', e=>{ if(!e.target.closest('.po-search')){ const r=document.getElementById('poRes'); if(r) r.classList.remove('show'); } });
+function poAddItem(pid){
+  const p=db.products.find(x=>x.id===pid); if(!p) return;
+  const d=poDraft(), ex=d.items.find(it=>it.productId===pid);
+  if(ex) ex.qty+=1; else d.items.push({productId:pid, qty:1, cost:Number(p.cost||0)});
+  const inp=document.getElementById('poSearch'); inp.value=''; document.getElementById('poRes').classList.remove('show');
+  renderPoNew(); inp.focus();
+}
+function poItemQty(i, v){ const it=poDraft().items[i]; if(!it) return; it.qty=Math.max(0, Math.round(parseFloat(v)||0)); renderPoNew(); }
+function poItemStep(i, d){ const it=poDraft().items[i]; if(!it) return; poItemQty(i, it.qty+d); }
+function poItemCost(i, v){ const it=poDraft().items[i]; if(!it) return; it.cost=Math.max(0, parseFloat(v)||0); renderPoNew(); }
+function poItemDel(i){ poDraft().items.splice(i,1); renderPoNew(); }
+function poNewProduct(){
+  openProductModal();
+  window.__poNewProduct=true;
+  document.getElementById('productAddQty').value=0; updateStockPreview();
+}
+function poAfterProductSaved(p){
+  if(!window.__poNewProduct) return;
+  window.__poNewProduct=false;
+  const d=poDraft(); if(!d.items.some(it=>it.productId===p.id)) d.items.push({productId:p.id, qty:1, cost:Number(p.cost||0)});
+}
+function renderPoNew(){
+  const d=poDraft();
+  supplierOptions(document.getElementById('poSup'), d.supplierId);
+  document.getElementById('poDate').value=d.date||isoToday();
+  const inv=document.getElementById('poInv'); if(document.activeElement!==inv) inv.value=d.invoice||'';
+  document.getElementById('poConsign').checked=!!d.consign;
+  document.getElementById('poCostHead').textContent='Закупка, '+cur();
+  d.items=d.items.filter(it=>db.products.some(p=>p.id===it.productId));
+  const body=document.getElementById('poItems');
+  body.innerHTML = d.items.length ? d.items.map((it,i)=>{
+    const p=db.products.find(x=>x.id===it.productId);
+    const changed = p && it.cost!==Number(p.cost||0) && Number(p.cost||0)>0;
+    return `<tr><td><b style="font-weight:600">${escapeHtml(p.name)}</b><small style="display:block;color:var(--muted);font-size:11.5px">${escapeHtml(p.category?catName(p.category):'')} · сейчас на складе ${p.qty||0} шт.</small>${changed?`<small class="warn">было ${fmt(p.cost)} ${cur()}</small>`:''}</td>
+      <td><div class="qty-step"><button onclick="poItemStep(${i},-1)">−</button><input type="number" min="0" value="${it.qty}" onchange="poItemQty(${i},this.value)"><button onclick="poItemStep(${i},1)">+</button></div></td>
+      <td><input class="po-cost" type="number" min="0" value="${it.cost}" onchange="poItemCost(${i},this.value)"></td>
+      <td><b>${fmt(it.qty*it.cost)}</b></td>
+      <td><button class="x-btn" title="Убрать" onclick="poItemDel(${i})">×</button></td></tr>`;
+  }).join('') : '<tr><td colspan="5" class="empty-row">Найдите товар в поиске выше и нажмите на него — он появится здесь</td></tr>';
+  const items=d.items.filter(it=>it.qty>0), units=items.reduce((a,it)=>a+it.qty,0), sum=r2(items.reduce((a,it)=>a+it.qty*it.cost,0));
+  document.getElementById('poTPos').textContent=items.length;
+  document.getElementById('poTUnits').textContent=units;
+  document.getElementById('poTCost').textContent=money(sum);
+  document.getElementById('poInfo').textContent = d.consign
+    ? `После проведения остатки вырастут сразу, а долг поставщику увеличится на ${money(sum)} (консигнация).`
+    : `После проведения остатки вырастут сразу, а ${money(sum)} запишется в закупки.`;
+}
+function poSaveDraft(){ db.settings.purchaseDraft=JSON.parse(JSON.stringify(poDraft())); saveDB(); toast('Черновик сохранён'); }
+function poCancelNew(){
+  const d=poDraft();
+  if((d.items.length || db.settings.purchaseDraft) && !confirm('Отменить приход? Введённые товары и черновик будут удалены.')) return;
+  window.__poDraft=null; delete db.settings.purchaseDraft; saveDB();
+  poState().mode='list'; renderPurchase();
+}
+function poPost(){
+  const d=poDraft();
+  const items=d.items.filter(it=>it.qty>0 && db.products.some(p=>p.id===it.productId));
+  if(!items.length){ toast('Добавьте товары и количество'); return; }
+  const sup=db.suppliers.find(s=>s.id===d.supplierId)||null, supNm=sup?sup.name:'Основной поставщик';
+  const iso=d.date||isoToday(), now=new Date();
+  let ts=now.getTime();
+  if(iso!==isoToday()){ const pr=iso.split('-'); ts=new Date(+pr[0], +pr[1]-1, +pr[2], 12, 0).getTime(); }
+  const date=isoToRu(iso), time=now.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+  const changed=[]; let sum=0;
+  items.forEach(it=>{
+    const p=db.products.find(x=>x.id===it.productId), old=Number(p.cost||0);
+    p.qty=(p.qty||0)+it.qty;
+    if(it.cost>0 && it.cost!==old){ if(old>0) changed.push({id:p.id, name:p.name, old, cost:it.cost, price:Number(p.price||0)}); p.cost=it.cost; }
+    db.transactions.push({id:uid(), type:'purchase', productId:p.id, productName:p.name, qty:it.qty, price:it.cost, total:r2(it.qty*it.cost),
+      supplierId:sup?sup.id:'', supplierName:supNm, invoice:d.invoice||'', consign:!!d.consign, date, time, ts});
+    sum+=it.qty*it.cost;
+  });
+  if(d.consign) supplierDebt(supNm, sup?sup.phone:'', sum, `Приход${d.invoice?' по накладной №'+d.invoice:''} (консигнация)`);
+  window.__poDraft=null; delete db.settings.purchaseDraft;
+  const st=poState(); st.mode='list'; st.tab='history';
+  saveDB(); renderAll(); toast('Приход проведён: +'+items.reduce((a,it)=>a+it.qty,0)+' шт.');
+  if(changed.length) openPriceReview(changed);
+}
+function openPriceReview(list){
+  window.__pr=list;
+  document.getElementById('prBody').innerHTML=list.map((r,i)=>{
+    const sug = r.price>0 ? Math.round(r.price*r.cost/r.old) : Math.round(r.cost*1.3);
+    return `<div class="pr-row"><div><b>${escapeHtml(r.name)}</b><small>Закупка: ${fmt(r.old)} → <span class="${r.cost>r.old?'up':'down'}">${fmt(r.cost)} ${cur()}</span> · сейчас продаёте по ${fmt(r.price)} ${cur()}</small></div><div class="r" style="display:flex;align-items:center;gap:6px"><input class="po-cost" type="number" min="0" id="prPrice${i}" value="${sug}"> ${cur()}</div></div>`;
+  }).join('');
+  openModal('priceReviewModalBg');
+}
+function savePriceReview(){
+  (window.__pr||[]).forEach((r,i)=>{ const v=parseFloat(document.getElementById('prPrice'+i).value); const p=db.products.find(x=>x.id===r.id); if(p && v>0) p.price=v; });
+  saveDB(); closeModal('priceReviewModalBg'); renderAll(); toast('Розничные цены обновлены');
+}
+function renderPurchaseHist(){
+  const body=document.getElementById('purchaseHistBody'); if(!body) return;
+  const list=db.transactions.filter(t=>t.type==='purchase').slice().reverse();
+  if(!list.length){ body.innerHTML='<tr><td colspan="6" class="empty-row">Приходов пока нет</td></tr>'; return; }
+  body.innerHTML=list.slice(0,400).map(t=>{
+    const doc = t.orderNum ? `Заказ №${t.orderNum}` : t.invoice ? `Накладная №${escapeHtml(t.invoice)}` : '—';
+    return `<tr><td>${t.date} ${t.time||''}</td><td>${escapeHtml(t.productName)}</td><td style="color:var(--text-2)">${escapeHtml(t.supplierName||'—')}${t.consign?' <span class="po-st partial" style="margin-left:4px">консигнация</span>':''}</td><td style="color:var(--muted)">${doc}</td><td>${t.qty}</td><td>${fmt(t.total)} ${cur()}</td></tr>`;
+  }).join('');
+}
+/* =================== конец ЗАКАЗОВ / ПРИХОДА =================== */
+
 /* ===================== NAV ===================== */
 const ICONS = {
   dashboard:'<svg viewBox="0 0 24 24" fill="none"><path d="M3 11.5 12 4l9 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -2310,7 +3180,8 @@ const ICONS = {
 ICONS.debts = '<svg viewBox="0 0 24 24" fill="none"><path d="M12 3v18M7 21h10M5 7h14M5 7l-3 7a3 3 0 0 0 6 0L5 7Zm14 0-3 7a3 3 0 0 0 6 0l-3-7Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 ICONS.expenses = '<svg viewBox="0 0 24 24" fill="none"><path d="M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2V3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 8h6M9 12h6M9 16h3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>';
 ICONS.abc = '<svg viewBox="0 0 24 24" fill="none"><path d="M4 20h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><rect x="5" y="4" width="4" height="13" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="10.5" y="9" width="4" height="8" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="16" y="13" width="3.5" height="4" rx="1" stroke="currentColor" stroke-width="1.8"/></svg>';
-const ADMIN_ONLY = ['purchase','products','reports','abc','expenses','categories','models','brands','suppliers','settings'];
+ICONS.autoorder = '<svg viewBox="0 0 24 24" fill="none"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const ADMIN_ONLY = ['autoorder','purchase','products','reports','abc','expenses','categories','models','brands','suppliers','settings'];
 const NAV = [
   {group:'Основное'},
   {id:'dashboard', label:'Главная'},
@@ -2322,6 +3193,7 @@ const NAV = [
   {id:'expenses', label:'Расходы'},
   {id:'reports', label:'Отчёты'},
   {id:'abc', label:'ABC-анализ'},
+  {id:'autoorder', label:'Авто-заказ'},
   {group:'Справочники', admin:true},
   {id:'categories', label:'Категории'},
   {id:'models', label:'Модели'},
@@ -2590,6 +3462,7 @@ function updateProfitPreview(){
   document.getElementById('productProfitPreview').value = fmt((price-cost)*stock) + ' ' + cur();
 }
 function openProductModal(editId){
+  window.__poNewProduct=false;
   fillSelect(document.getElementById('productCategory'), db.categories, '— не выбрано —');
   fillSelect(document.getElementById('productBrand'), db.brands, 'Выберите бренд');
   fillDatalist(document.getElementById('productModelList'), db.models);
@@ -2660,6 +3533,7 @@ function saveProduct(){
     const p = {id:uid(), qty:0, ...data};
     db.products.push(p);
     logPurchaseTx(p, addQty, cost);
+    if(typeof poAfterProductSaved==='function') poAfterProductSaved(p);
     toast('Товар добавлен');
   }
   saveDB(); closeModal('productModalBg'); renderAll();
@@ -2709,34 +3583,13 @@ function renderStock(){
 
 /* ===================== PURCHASE / SALE ===================== */
 function refreshProductSelects(){
-  const ps = document.getElementById('purchaseProduct'), ss = document.getElementById('saleProduct'), cs = document.getElementById('saleClient');
-  const pv = ps.value, sv = ss.value, cv = cs.value;
-  fillSelect(ps, db.products, null);
+  const ss = document.getElementById('saleProduct'), cs = document.getElementById('saleClient');
+  const sv = ss.value, cv = cs.value;
   fillSelect(ss, db.products, null);
   fillSelect(cs, db.clients, '—');
-  if(pv && db.products.some(p=>p.id===pv)) ps.value = pv;
   if(sv && db.products.some(p=>p.id===sv)) ss.value = sv;
   if(cv) cs.value = cv;
-  if(ps.value !== pv) onPurchaseProductChange();
   if(ss.value !== sv) onSaleProductChange(); else updateSalePreview();
-}
-function doPurchase(){
-  const pid = document.getElementById('purchaseProduct').value;
-  const qty = parseFloat(document.getElementById('purchaseQty').value);
-  const price = parseFloat(document.getElementById('purchasePrice').value);
-  if(!pid){ toast('Выберите товар'); return; }
-  if(!qty || qty<=0){ toast('Укажите количество'); return; }
-  const p = db.products.find(x=>x.id===pid);
-  p.qty += qty;
-  if(price>0) p.cost = price;
-  const now = new Date();
-  db.transactions.push({id:uid(), type:'purchase', productId:pid, productName:p.name, qty, price, total: qty*price, date: now.toLocaleDateString('ru-RU'), time: now.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}), ts: now.getTime()});
-  saveDB(); renderAll(); toast('Приход оформлен');
-  document.getElementById('purchaseQty').value=1; onPurchaseProductChange();
-}
-function onPurchaseProductChange(){
-  const p = db.products.find(x=>x.id===document.getElementById('purchaseProduct').value);
-  document.getElementById('purchasePrice').value = p ? (p.cost||0) : 0;
 }
 /* Прибыль с продажи = (цена продажи − цена закупки) × количество */
 function txCost(t){
@@ -2745,12 +3598,6 @@ function txCost(t){
   return p ? (p.cost||0) : 0;
 }
 function txProfit(t){ return t.total - txCost(t)*t.qty; }
-function renderPurchaseHist(){
-  const body = document.getElementById('purchaseHistBody');
-  const list = db.transactions.filter(t=>t.type==='purchase').slice().reverse();
-  if(list.length===0){ body.innerHTML='<tr><td colspan="4" class="empty-row">Приходов пока нет</td></tr>'; return; }
-  body.innerHTML = list.map(t=>`<tr><td>${t.date} ${t.time}</td><td>${t.productName}</td><td>${t.qty}</td><td>${fmt(t.total)} ${cur()}</td></tr>`).join('');
-}
 /* ===================== DASHBOARD / REPORTS ===================== */
 function animateValue(id, n, money){
   const el = document.getElementById(id); if(!el) return;
@@ -3060,7 +3907,8 @@ function renderAll(){
   renderClients();
   refreshProductSelects();
   renderCart();
-  renderPurchaseHist();
+  renderPurchase();
+  renderAutoOrder();
   renderSaleHist();
   renderReports();
   renderABC();

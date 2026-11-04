@@ -68,6 +68,30 @@ ipcMain.handle('backup:choose', async (event) => {
   return info();
 });
 
+/* ---------- Сохранение PDF (заказы поставщикам) ---------- */
+ipcMain.handle('pdf:save', async (event, html, name) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  const safe = String(name || 'document.pdf').replace(/[\\/:*?"<>|]+/g, '_');
+  const pw = new BrowserWindow({ show: false });
+  try {
+    await pw.loadURL('data:text/html;charset=utf-8,' + encodeURIComponent(html));
+    const pdf = await pw.webContents.printToPDF({ pageSize: 'A4', printBackground: true });
+    const res = await dialog.showSaveDialog(win, {
+      title: 'Сохранить PDF',
+      defaultPath: path.join(app.getPath('documents'), safe),
+      filters: [{ name: 'PDF', extensions: ['pdf'] }]
+    });
+    if (res.canceled || !res.filePath) return { ok: false, canceled: true };
+    fs.writeFileSync(res.filePath, pdf);
+    shell.openPath(res.filePath);
+    return { ok: true, path: res.filePath };
+  } catch (e) {
+    return { ok: false, error: String(e && e.message || e) };
+  } finally {
+    if (!pw.isDestroyed()) pw.destroy();
+  }
+});
+
 /* ---------- Окно ---------- */
 function createWindow() {
   const win = new BrowserWindow({

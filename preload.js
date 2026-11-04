@@ -5,5 +5,6 @@ contextBridge.exposeInMainWorld('oledNative', {
   backupInfo: () => ipcRenderer.invoke('backup:info'),
   openBackupFolder: () => ipcRenderer.invoke('backup:open'),
   chooseBackupFolder: () => ipcRenderer.invoke('backup:choose'),
+  savePdf: (html, name) => ipcRenderer.invoke('pdf:save', html, name),
   setZoom: (f) => webFrame.setZoomFactor(f)
 });

@@ -1056,6 +1056,29 @@ td small.more{display:block;color:var(--accent);font-size:11.5px;font-weight:600
 .pr-row .up{color:var(--red);font-weight:700;}
 .pr-row .down{color:#16a36a;font-weight:700;}
 </style>
+<style>
+/* ============ ПРАЙС-ЛИСТ ============ */
+.pl-head{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:14px;}
+.pl-head h2.page-title{margin:0;}
+.pl-date{padding:10px 16px;border-radius:12px;border:1px solid var(--line-2);background:var(--surface);font-weight:600;font-size:13px;}
+.pl-tabs{display:flex;gap:4px;border-bottom:1px solid var(--line-2);margin-bottom:20px;}
+.pl-tabs button{display:inline-flex;align-items:center;gap:8px;border:0;background:transparent;padding:12px 18px;font:600 14px var(--font);color:var(--text-2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;}
+.pl-tabs button svg{width:16px;height:16px;}
+.pl-tabs button:hover{color:var(--text);}
+.pl-tabs button.active{color:var(--accent);border-bottom-color:var(--accent);}
+.pl-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;align-items:start;}
+.pl-grid .panel{margin:0;}
+.pl-side h3{margin:0 0 16px;}
+.pl-label{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin:16px 0 10px;}
+.pl-side .po-switch-row{margin-top:10px;}
+.pl-big{width:100%;justify-content:center;padding:13px;margin-top:10px;font-size:14px;}
+.pl-wa{background:transparent !important;border:1.5px solid #16a36a;color:#16a36a;box-shadow:none;}
+.pl-wa:hover{background:var(--green-soft) !important;}
+.pl-hint{font-size:11.5px;color:var(--muted);line-height:1.55;margin:14px 0 0;}
+.pl-foot{font-size:12px;color:var(--muted);margin-top:12px;}
+#plBody td.b{font-weight:700;}
+@media (max-width:1100px){.pl-grid{grid-template-columns:1fr;}}
+</style>
 </head>
 <body class="light" data-color="violet">
 
@@ -1184,7 +1207,12 @@ td small.more{display:block;color:var(--accent);font-size:11.5px;font-weight:600
 
     <!-- PRODUCTS -->
     <section class="page" id="page-products">
-      <h2 class="page-title">Товары</h2>
+      <div class="pl-head"><h2 class="page-title">Товары</h2><div class="pl-date" id="plDatePill" style="display:none"></div></div>
+      <div class="pl-tabs">
+        <button id="prodTabBtnAll" class="active" onclick="prodSetTab('all')"><svg viewBox="0 0 24 24" fill="none"><path d="M21 8 12 3 3 8l9 5 9-5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M3 8v8l9 5 9-5V8M12 13v8" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg> Все товары</button>
+        <button id="prodTabBtnPrice" onclick="prodSetTab('price')"><svg viewBox="0 0 24 24" fill="none"><path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9-9-9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/></svg> Прайс-лист</button>
+      </div>
+      <div id="prodTabAll">
       <div class="toolbar">
         <input type="text" id="prodSearch" placeholder="Поиск по названию..." oninput="renderProducts()">
         <button class="btn" onclick="openProductModal()">+ Добавить товар</button>
@@ -1194,6 +1222,31 @@ td small.more{display:block;color:var(--accent);font-size:11.5px;font-weight:600
           <thead><tr><th>Название</th><th>Категория</th><th>Бренд</th><th>Модель</th><th>Остаток</th><th>Закуп.</th><th>Продажа</th><th></th></tr></thead>
           <tbody id="productsBody"></tbody>
         </table>
+      </div>
+      </div>
+      <div id="prodTabPrice" style="display:none">
+        <div class="pl-grid">
+          <div class="panel">
+            <div class="panel-head"><h3>Предпросмотр</h3><span class="panel-note" id="plNote"></span></div>
+            <table>
+              <thead><tr><th>Название</th><th>Бренд</th><th id="plQtyHead">Кол-во</th><th>Цена</th></tr></thead>
+              <tbody id="plBody"></tbody>
+            </table>
+            <div class="pl-foot" id="plFoot"></div>
+          </div>
+          <div class="panel pl-side">
+            <h3>Что включить в прайс</h3>
+            <div class="pl-label">Бренд</div>
+            <div class="ao-chips" id="plBrands"></div>
+            <label class="po-switch-row"><div><b>Скрыть товары с нулевым остатком</b></div><span class="sw"><input type="checkbox" id="plHideZero" checked onchange="plSet('hideZero',this.checked)"><i></i></span></label>
+            <label class="po-switch-row"><div><b>Показывать количество</b></div><span class="sw"><input type="checkbox" id="plShowQty" checked onchange="plSet('showQty',this.checked)"><i></i></span></label>
+            <div class="pl-label">Формат</div>
+            <div class="ao-chips" id="plFormats"></div>
+            <button class="btn green pl-big" onclick="plDownload()"><svg viewBox="0 0 24 24" fill="none"><path d="M12 4v11m0 0-4-4m4 4 4-4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg> <span id="plDownloadTxt">Скачать прайс</span></button>
+            <button class="btn pl-big pl-wa" onclick="plWhatsApp()"><svg viewBox="0 0 24 24" fill="none"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19.2L4 20Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 9.5c.3 1.8 2.6 4.2 4.6 4.6l1.2-1.1 1.7.8c-.2 1.2-1.1 1.8-2.2 1.7-3-.3-6.1-3.4-6.4-6.4-.1-1.1.5-2 1.7-2.2l.8 1.7L9 9.5Z" fill="currentColor"/></svg> Отправить в WhatsApp</button>
+            <p class="pl-hint">В прайс попадают название, бренд, цена продажи и, если включено, количество. Закупочные цены клиентам не показываются.</p>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -3895,10 +3948,99 @@ function updateBackupInfo(){
   }
 }
 
+/* ===================== ПРАЙС-ЛИСТ ===================== */
+function prodState(){ return window.__prodTab || (window.__prodTab={tab:'all'}); }
+function prodSetTab(t){ prodState().tab=t; renderPriceList(); }
+function plState(){ return window.__pl || (window.__pl={brand:'all', hideZero:true, showQty:true, format:'pdf'}); }
+function plSet(k,v){ plState()[k]=v; renderPriceList(); }
+function plRows(){
+  const st=plState();
+  const byBrand=db.products.filter(p=>st.brand==='all' || p.brand===st.brand);
+  const rows=byBrand.filter(p=>!st.hideZero || (p.qty||0)>0);
+  return {rows, hidden: byBrand.length-rows.length};
+}
+function plDateStr(){ return new Date().toLocaleDateString('ru-RU'); }
+function plPosWord(n){ const a=n%10, b=n%100; return (a===1&&b!==11)?'позиция':(a>=2&&a<=4&&(b<10||b>=20))?'позиции':'позиций'; }
+function renderPriceList(){
+  const box=document.getElementById('prodTabPrice'); if(!box) return;
+  const st=plState(), isPrice=prodState().tab==='price';
+  document.getElementById('prodTabAll').style.display = isPrice ? 'none' : '';
+  box.style.display = isPrice ? '' : 'none';
+  document.getElementById('prodTabBtnAll').classList.toggle('active', !isPrice);
+  document.getElementById('prodTabBtnPrice').classList.toggle('active', isPrice);
+  const pill=document.getElementById('plDatePill');
+  pill.style.display = isPrice ? '' : 'none';
+  pill.textContent = 'Прайс-лист на '+plDateStr();
+  if(!isPrice) return;
+  if(st.brand!=='all' && !db.brands.some(b=>b.id===st.brand)) st.brand='all';
+  const used=db.brands.filter(b=>db.products.some(p=>p.brand===b.id));
+  document.getElementById('plBrands').innerHTML=[`<button class="ao-chip ${st.brand==='all'?'active':''}" onclick="plSet('brand','all')">Все</button>`]
+    .concat(used.map(b=>`<button class="ao-chip ${st.brand===b.id?'active':''}" onclick="plSet('brand','${b.id}')">${escapeHtml(b.name)}</button>`)).join('');
+  document.getElementById('plFormats').innerHTML=[['pdf','PDF'],['excel','Excel'],['print','Печать']]
+    .map(([v,t])=>`<button class="ao-chip ${st.format===v?'active':''}" onclick="plSet('format','${v}')">${t}</button>`).join('');
+  document.getElementById('plDownloadTxt').textContent = st.format==='print' ? 'Печать прайса' : 'Скачать прайс';
+  document.getElementById('plHideZero').checked=st.hideZero;
+  document.getElementById('plShowQty').checked=st.showQty;
+  const {rows, hidden}=plRows();
+  document.getElementById('plNote').textContent=`${rows.length} ${plPosWord(rows.length)} · цены в ${cur()}`;
+  document.getElementById('plQtyHead').style.display = st.showQty ? '' : 'none';
+  document.getElementById('plBody').innerHTML = rows.length ? rows.map(p=>`<tr><td>${escapeHtml(p.name)}</td><td>${escapeHtml(brandName(p.brand))}</td>${st.showQty?`<td class="b">${p.qty} шт.</td>`:''}<td class="b">${fmt(p.price)} ${cur()}</td></tr>`).join('')
+    : `<tr><td colspan="${st.showQty?4:3}" class="empty-row">Нет товаров для прайса</td></tr>`;
+  document.getElementById('plFoot').textContent = st.hideZero && hidden ? `Скрыто товаров с нулевым остатком: ${hidden}` : '';
+}
+function plHtml(){
+  const s=db.settings, st=plState(), {rows}=plRows();
+  const body=rows.map((p,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(p.name)}</td><td>${escapeHtml(brandName(p.brand))}</td>${st.showQty?`<td class="n">${p.qty} шт.</td>`:''}<td class="n"><b>${fmt(p.price)} ${cur()}</b></td></tr>`).join('');
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Прайс-лист ${plDateStr()}</title><style>
+    body{font-family:'Segoe UI',Arial,sans-serif;color:#111827;margin:36px;font-size:13px}
+    h1{font-size:22px;margin:0 0 4px} .muted{color:#6b7280} .top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #4f46e5;padding-bottom:14px;margin-bottom:18px}
+    .shop{font-weight:700;font-size:16px;color:#4f46e5} table{width:100%;border-collapse:collapse;margin-top:12px}
+    th{background:#eef2ff;text-align:left;padding:9px 10px;font-size:12px;color:#374151} td{padding:9px 10px;border-bottom:1px solid #e5e7eb}
+    .n{text-align:right;white-space:nowrap}
+  </style></head><body>
+    <div class="top"><div><div class="shop">${escapeHtml(s.shopName||'OLED SERVICE')}</div>${s.phone?`<div class="muted">Тел.: ${escapeHtml(s.phone)}</div>`:''}</div>
+    <div style="text-align:right"><h1>Прайс-лист</h1><div class="muted">на ${plDateStr()}</div></div></div>
+    <table><thead><tr><th>№</th><th>Название</th><th>Бренд</th>${st.showQty?'<th class="n">Кол-во</th>':''}<th class="n">Цена, ${cur()}</th></tr></thead>
+    <tbody>${body}</tbody></table>
+  </body></html>`;
+}
+function plDownload(){
+  const st=plState(), {rows}=plRows();
+  if(!rows.length){ toast('Нет товаров для прайса'); return; }
+  const dateFile=plDateStr().replace(/\./g,'-');
+  if(st.format==='excel'){
+    const cell=v=>`"${String(v ?? '').replace(/"/g,'""')}"`;
+    const head=['Название','Бренд'].concat(st.showQty?['Кол-во, шт']:[]).concat([`Цена, ${cur()}`]);
+    const lines=[head.map(cell).join(';')].concat(rows.map(p=>[p.name, brandName(p.brand)].concat(st.showQty?[p.qty]:[]).concat([String(Math.round((p.price||0)*100)/100).replace('.',',')]).map(cell).join(';')));
+    const blob=new Blob(['﻿'+lines.join('\r\n')], {type:'text/csv;charset=utf-8'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob); a.download=`Прайс-лист_${dateFile}.csv`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+    toast('Прайс-лист сохранён');
+    return;
+  }
+  const html=plHtml();
+  if(st.format==='print'){ printHtml(html); toast('Прайс-лист отправлен на печать'); return; }
+  const name=`Прайс-лист_${dateFile}.pdf`;
+  if(window.oledNative && window.oledNative.savePdf){
+    window.oledNative.savePdf(html, name).then(r=>{ if(r && r.ok) toast('PDF сохранён'); else if(r && r.error) toast('Ошибка PDF: '+r.error); }).catch(()=>printHtml(html));
+  } else printHtml(html);
+}
+function plWhatsApp(){
+  const st=plState(), {rows}=plRows();
+  if(!rows.length){ toast('Нет товаров для прайса'); return; }
+  const text=`*${db.settings.shopName||'OLED SERVICE'}*\nПрайс-лист на ${plDateStr()}\n\n`
+    + rows.map(p=>`• ${p.name} — ${fmt(p.price)} ${cur()}${st.showQty?` (${p.qty} шт.)`:''}`).join('\n')
+    + (db.settings.phone?`\n\nТел.: ${db.settings.phone}`:'');
+  openWhatsApp('', text);
+}
+
 /* ===================== RENDER ALL ===================== */
 function renderAll(){
   renderDashboard();
   renderProducts();
+  renderPriceList();
   renderCategories();
   renderModels();
   renderBrands();
